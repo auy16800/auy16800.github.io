@@ -16,14 +16,14 @@
 <meta property="og:description" content="1.Mybatis简介1.1 原始jdbc操作的分析原始jdbc开发存在的问题如下： ①数据库连接创建、释放频繁造成系统资源浪费从而影响系统性能 ②sql 语句在代码中硬编码，造成代码不易维护，实际应用 sql 变化的可能较大，sql 变动需要改变java代码。 ③查询操作时，需要手动将结果集中的数据手动封装到实体中。插入操作时，需要手动将实体的数据设置到sql语句的占位符位置 应对上述问题给出的">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="d:&#x2F;WorkSpaceO&#x2F;HexoBlog&#x2F;source&#x2F;_posts&#x2F;img&#x2F;%E5%9B%BE%E7%89%878.png">
-<meta property="og:updated_time" content="2018-12-21T06:17:27.522Z">
+<meta property="og:updated_time" content="2019-10-27T07:18:19.647Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="d:&#x2F;WorkSpaceO&#x2F;HexoBlog&#x2F;source&#x2F;_posts&#x2F;img&#x2F;%E5%9B%BE%E7%89%878.png">
   
     <link rel="alternative" href="/atom.xml" title="Auy16800&#39;s Blog" type="application/atom+xml">
   
   
-    <link rel="icon" href="/favicon.png">
+    <link rel="icon" href="/assets/img/icon.jpg">
   
   <link rel="stylesheet" type="text/css" href="/./main.0cf68a.css">
   <style type="text/css">
@@ -47,7 +47,7 @@
 <div class="intrude-less">
 	<header id="header" class="inner">
 		<a href="/" class="profilepic">
-			<img src="https://wx2.sinaimg.cn/mw690/64b09626ly1fx8r4klba8j20u011ktq0.jpg" class="js-avatar">
+			<img src="/assets/img/bear.jpg" class="js-avatar">
 		</a>
 		<hgroup>
 		  <h1 class="header-author"><a href="/">Auy</a></h1>
@@ -105,7 +105,7 @@
 	<div class="intrude-less">
 		<header id="header" class="inner">
 			<div class="profilepic">
-				<img src="https://wx2.sinaimg.cn/mw690/64b09626ly1fx8r4klba8j20u011ktq0.jpg" class="js-avatar">
+				<img src="/assets/img/bear.jpg" class="js-avatar">
 			</div>
 			<hgroup>
 			  <h1 class="header-author js-header-author">Auy</h1>
@@ -182,6 +182,8 @@
 <p>①使用数据库连接池初始化连接资源</p>
 <p>②将sql语句抽取到xml配置文件中</p>
 <p>③使用反射、内省等底层技术，自动将实体与表进行属性与字段的自动映射</p>
+<a id="more"></a>
+
 <h4 id="1-2-什么是Mybatis"><a href="#1-2-什么是Mybatis" class="headerlink" title="1.2 什么是Mybatis"></a>1.2 什么是Mybatis</h4><p>mybatis 是一个优秀的基于java的持久层框架，它内部封装了jdbc，使开发者只需要关注sql语句本身，而不需要花费精力去处理加载驱动、创建连接、创建statement等繁杂的过程。</p>
 <p>mybatis通过xml或注解的方式将要执行的各种 statement配置起来，并通过java对象和statement中sql的动态参数进行映射生成最终执行的sql语句。</p>
 <p>最后mybatis框架执行sql并将结果映射为java对象并返回。采用ORM思想解决了实体和数据库映射的问题，对jdbc 进行了封装，屏蔽了jdbc api 底层访问细节，使我们不用与jdbc api 打交道，就可以完成对数据库的持久化操作。</p>
