@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives | Auy16800&#39;s Blog</title>
+  <title>mybatis01笔记 | Auy16800&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Auy16800&#39;s Blog">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;archives&#x2F;index.html">
+  <meta name="description" content="1.Mybatis简介1.1 原始jdbc操作的分析原始jdbc开发存在的问题如下： ①数据库连接创建、释放频繁造成系统资源浪费从而影响系统性能 ②sql 语句在代码中硬编码，造成代码不易维护，实际应用 sql 变化的可能较大，sql 变动需要改变java代码。 ③查询操作时，需要手动将结果集中的数据手动封装到实体中。插入操作时，需要手动将实体的数据设置到sql语句的占位符位置 应对上述问题给出的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mybatis01笔记">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;27&#x2F;mybatis01%E7%AC%94%E8%AE%B0&#x2F;index.html">
 <meta property="og:site_name" content="Auy16800&#39;s Blog">
+<meta property="og:description" content="1.Mybatis简介1.1 原始jdbc操作的分析原始jdbc开发存在的问题如下： ①数据库连接创建、释放频繁造成系统资源浪费从而影响系统性能 ②sql 语句在代码中硬编码，造成代码不易维护，实际应用 sql 变化的可能较大，sql 变动需要改变java代码。 ③查询操作时，需要手动将结果集中的数据手动封装到实体中。插入操作时，需要手动将实体的数据设置到sql语句的占位符位置 应对上述问题给出的">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;27&#x2F;mybatis01%E7%AC%94%E8%AE%B0&#x2F;img%5C%E5%9B%BE%E7%89%878.png">
+<meta property="og:updated_time" content="2019-10-27T06:10:17.050Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;27&#x2F;mybatis01%E7%AC%94%E8%AE%B0&#x2F;img%5C%E5%9B%BE%E7%89%878.png">
   
     <link rel="alternative" href="/atom.xml" title="Auy16800&#39;s Blog" type="application/atom+xml">
   
@@ -149,103 +154,303 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-mybatis01笔记" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      mybatis01笔记
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/10/27/mybatis01%E7%AC%94%E8%AE%B0/" class="archive-article-date">
+
+        
+        <a href="/2019/10/27/mybatis01%E7%AC%94%E8%AE%B0/" class="archive-article-date">
   	<time datetime="2019-10-27T06:10:37.469Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-27</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/10/27/mybatis01%E7%AC%94%E8%AE%B0/">mybatis01笔记</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1-Mybatis简介"><a href="#1-Mybatis简介" class="headerlink" title="1.Mybatis简介"></a>1.Mybatis简介</h3><h4 id="1-1-原始jdbc操作的分析"><a href="#1-1-原始jdbc操作的分析" class="headerlink" title="1.1 原始jdbc操作的分析"></a>1.1 原始jdbc操作的分析</h4><p>原始jdbc开发存在的问题如下：</p>
+<p>①数据库连接创建、释放频繁造成系统资源浪费从而影响系统性能</p>
+<p>②sql 语句在代码中硬编码，造成代码不易维护，实际应用 sql 变化的可能较大，sql 变动需要改变java代码。</p>
+<p>③查询操作时，需要手动将结果集中的数据手动封装到实体中。插入操作时，需要手动将实体的数据设置到sql语句的占位符位置</p>
+<p>应对上述问题给出的解决方案：</p>
+<p>①使用数据库连接池初始化连接资源</p>
+<p>②将sql语句抽取到xml配置文件中</p>
+<p>③使用反射、内省等底层技术，自动将实体与表进行属性与字段的自动映射</p>
+<h4 id="1-2-什么是Mybatis"><a href="#1-2-什么是Mybatis" class="headerlink" title="1.2 什么是Mybatis"></a>1.2 什么是Mybatis</h4><p>mybatis 是一个优秀的基于java的持久层框架，它内部封装了jdbc，使开发者只需要关注sql语句本身，而不需要花费精力去处理加载驱动、创建连接、创建statement等繁杂的过程。</p>
+<p>mybatis通过xml或注解的方式将要执行的各种 statement配置起来，并通过java对象和statement中sql的动态参数进行映射生成最终执行的sql语句。</p>
+<p>最后mybatis框架执行sql并将结果映射为java对象并返回。采用ORM思想解决了实体和数据库映射的问题，对jdbc 进行了封装，屏蔽了jdbc api 底层访问细节，使我们不用与jdbc api 打交道，就可以完成对数据库的持久化操作。</p>
+<h3 id="2-Mybatis的快速入门"><a href="#2-Mybatis的快速入门" class="headerlink" title="2.Mybatis的快速入门"></a>2.Mybatis的快速入门</h3><h4 id="2-1-MyBatis开发步骤"><a href="#2-1-MyBatis开发步骤" class="headerlink" title="2.1 MyBatis开发步骤"></a>2.1 MyBatis开发步骤</h4><p>MyBatis官网地址：<a href="http://www.mybatis.org/mybatis-3/" target="_blank" rel="noopener">http://www.mybatis.org/mybatis-3/</a> </p>
+<p><strong>MyBatis开发步骤：</strong></p>
+<p>①添加MyBatis的坐标</p>
+<p>②创建user数据表</p>
+<p>③编写User实体类 </p>
+<p>④编写映射文件UserMapper.xml</p>
+<p>⑤编写核心文件SqlMapConfig.xml</p>
+<p>⑥编写测试类</p>
+<h4 id="2-2-环境搭建"><a href="#2-2-环境搭建" class="headerlink" title="2.2 环境搭建"></a>2.2 环境搭建</h4><p>1)导入MyBatis的坐标和其他相关坐标</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--mybatis坐标--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.4.5<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--mysql驱动坐标--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>   </span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.1.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--单元测试坐标--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--日志坐标--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-        <div class="article-info info-on-right">
-          
-          
+<p>2)  创建user数据表</p>
+<p>3) 编写User实体</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;    </span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;    </span><br><span class="line">	<span class="keyword">private</span> String username;    </span><br><span class="line">	<span class="keyword">private</span> String password;</span><br><span class="line">    <span class="comment">//省略get个set方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>4)编写UserMapper映射文件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE mapper        </span></span><br><span class="line"><span class="meta">	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"        </span></span><br><span class="line"><span class="meta">	"http://mybatis.org/dtd/mybatis-3-mapper.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"userMapper"</span>&gt;</span>    </span><br><span class="line">	<span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"findAll"</span> <span class="attr">resultType</span>=<span class="string">"com.itheima.domain.User"</span>&gt;</span>        </span><br><span class="line">		select * from User    </span><br><span class="line">	<span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>5) 编写MyBatis核心文件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN“ "http://mybatis.org/dtd/mybatis-3-config.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span>    </span><br><span class="line">	<span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">"development"</span>&gt;</span>        </span><br><span class="line">		<span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">"development"</span>&gt;</span>            </span><br><span class="line">			<span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">"JDBC"</span>/&gt;</span>            </span><br><span class="line">			<span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">"POOLED"</span>&gt;</span>                </span><br><span class="line">				<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"driver"</span> <span class="attr">value</span>=<span class="string">"com.mysql.jdbc.Driver"</span>/&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"url"</span> <span class="attr">value</span>=<span class="string">"jdbc:mysql:///test"</span>/&gt;</span>                </span><br><span class="line">				<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"username"</span> <span class="attr">value</span>=<span class="string">"root"</span>/&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"password"</span> <span class="attr">value</span>=<span class="string">"root"</span>/&gt;</span>            </span><br><span class="line">			<span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span>        </span><br><span class="line">		<span class="tag">&lt;/<span class="name">environment</span>&gt;</span>    </span><br><span class="line">	<span class="tag">&lt;/<span class="name">environments</span>&gt;</span>    </span><br><span class="line">	</span><br><span class="line">	<span class="tag">&lt;<span class="name">mappers</span>&gt;</span> </span><br><span class="line">		<span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">"com/itheima/mapper/UserMapper.xml"</span>/&gt;</span> </span><br><span class="line">	<span class="tag">&lt;/<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-编写测试代码"><a href="#2-3-编写测试代码" class="headerlink" title="2.3 编写测试代码"></a>2.3 编写测试代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//加载核心配置文件</span></span><br><span class="line">InputStream resourceAsStream = Resources.getResourceAsStream(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line"><span class="comment">//获得sqlSession工厂对象</span></span><br><span class="line">SqlSessionFactory sqlSessionFactory = <span class="keyword">new</span>            </span><br><span class="line">                           SqlSessionFactoryBuilder().build(resourceAsStream);</span><br><span class="line"><span class="comment">//获得sqlSession对象</span></span><br><span class="line">SqlSession sqlSession = sqlSessionFactory.openSession();</span><br><span class="line"><span class="comment">//执行sql语句</span></span><br><span class="line">List&lt;User&gt; userList = sqlSession.selectList(<span class="string">"userMapper.findAll"</span>);</span><br><span class="line"><span class="comment">//打印结果</span></span><br><span class="line">System.out.println(userList);</span><br><span class="line"><span class="comment">//释放资源</span></span><br><span class="line">sqlSession.close();</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-4-知识小结"><a href="#2-4-知识小结" class="headerlink" title="2.4 知识小结"></a>2.4 知识小结</h4><p><strong>MyBatis开发步骤：</strong></p>
+<p>①添加MyBatis的坐标</p>
+<p>②创建user数据表</p>
+<p>③编写User实体类 </p>
+<p>④编写映射文件UserMapper.xml</p>
+<p>⑤编写核心文件SqlMapConfig.xml</p>
+<p>⑥编写测试类</p>
+<h3 id="3-MyBatis的增删改查操作"><a href="#3-MyBatis的增删改查操作" class="headerlink" title="3. MyBatis的增删改查操作"></a>3. MyBatis的增删改查操作</h3><h4 id="3-1-MyBatis的插入数据操作"><a href="#3-1-MyBatis的插入数据操作" class="headerlink" title="3.1 MyBatis的插入数据操作"></a>3.1 MyBatis的插入数据操作</h4><p><strong>1)编写UserMapper映射文件</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"userMapper"</span>&gt;</span>    </span><br><span class="line">	<span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">"add"</span> <span class="attr">parameterType</span>=<span class="string">"com.itheima.domain.User"</span>&gt;</span>        </span><br><span class="line">		insert into user values(#&#123;id&#125;,#&#123;username&#125;,#&#123;password&#125;)    </span><br><span class="line">	<span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2)编写插入实体User的代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">InputStream resourceAsStream = Resources.getResourceAsStream(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">SqlSessionFactory sqlSessionFactory = <span class="keyword">new</span> </span><br><span class="line">                        SqlSessionFactoryBuilder().build(resourceAsStream);</span><br><span class="line">SqlSession sqlSession = sqlSessionFactory.openSession();</span><br><span class="line"><span class="keyword">int</span> insert = sqlSession.insert(<span class="string">"userMapper.add"</span>, user);</span><br><span class="line">System.out.println(insert);</span><br><span class="line"><span class="comment">//提交事务</span></span><br><span class="line">sqlSession.commit();</span><br><span class="line">sqlSession.close();</span><br></pre></td></tr></table></figure>
+
+<p><strong>3)插入操作注意问题</strong></p>
+<p>• 插入语句使用insert标签</p>
+<p>• 在映射文件中使用parameterType属性指定要插入的数据类型</p>
+<p>•Sql语句中使用#{实体属性名}方式引用实体中的属性值</p>
+<p>•插入操作使用的API是sqlSession.insert(“命名空间.id”,实体对象);</p>
+<p>•插入操作涉及数据库数据变化，所以要使用sqlSession对象显示的提交事务，即sqlSession.commit() </p>
+<h4 id="3-2-MyBatis的修改数据操作"><a href="#3-2-MyBatis的修改数据操作" class="headerlink" title="3.2 MyBatis的修改数据操作"></a>3.2 MyBatis的修改数据操作</h4><p><strong>1)编写UserMapper映射文件</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"userMapper"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">update</span> <span class="attr">id</span>=<span class="string">"update"</span> <span class="attr">parameterType</span>=<span class="string">"com.itheima.domain.User"</span>&gt;</span></span><br><span class="line">        update user set username=#&#123;username&#125;,password=#&#123;password&#125; where id=#&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">update</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2)编写修改实体User的代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">InputStream resourceAsStream = Resources.getResourceAsStream(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">SqlSessionFactory sqlSessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(resourceAsStream);</span><br><span class="line">SqlSession sqlSession = sqlSessionFactory.openSession();</span><br><span class="line"><span class="keyword">int</span> update = sqlSession.update(<span class="string">"userMapper.update"</span>, user);</span><br><span class="line">System.out.println(update);</span><br><span class="line">sqlSession.commit();</span><br><span class="line">sqlSession.close();</span><br></pre></td></tr></table></figure>
+
+<p><strong>3)修改操作注意问题</strong></p>
+<p>• 修改语句使用update标签</p>
+<p>• 修改操作使用的API是sqlSession.update(“命名空间.id”,实体对象);</p>
+<h4 id="3-3-MyBatis的删除数据操作"><a href="#3-3-MyBatis的删除数据操作" class="headerlink" title="3.3 MyBatis的删除数据操作"></a>3.3 MyBatis的删除数据操作</h4><p><strong>1)编写UserMapper映射文件</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"userMapper"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">delete</span> <span class="attr">id</span>=<span class="string">"delete"</span> <span class="attr">parameterType</span>=<span class="string">"java.lang.Integer"</span>&gt;</span></span><br><span class="line">        delete from user where id=#&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2)编写删除数据的代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">InputStream resourceAsStream = Resources.getResourceAsStream(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">SqlSessionFactory sqlSessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(resourceAsStream);</span><br><span class="line">SqlSession sqlSession = sqlSessionFactory.openSession();</span><br><span class="line"><span class="keyword">int</span> delete = sqlSession.delete(<span class="string">"userMapper.delete"</span>,<span class="number">3</span>);</span><br><span class="line">System.out.println(delete);</span><br><span class="line">sqlSession.commit();</span><br><span class="line">sqlSession.close();</span><br></pre></td></tr></table></figure>
+
+<p><strong>3)删除操作注意问题</strong></p>
+<p>• 删除语句使用delete标签</p>
+<p>•Sql语句中使用#{任意字符串}方式引用传递的单个参数</p>
+<p>•删除操作使用的API是sqlSession.delete(“命名空间.id”,Object);</p>
+<h4 id="3-4-知识小结"><a href="#3-4-知识小结" class="headerlink" title="3.4 知识小结"></a>3.4 知识小结</h4><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">增删改查映射配置与API：</span><br><span class="line">查询数据： List&lt;User&gt; userList = sqlSession.selectList(<span class="string">"userMapper.findAll"</span>);</span><br><span class="line">    &lt;select id=<span class="string">"findAll"</span> resultType=<span class="string">"com.itheima.domain.User"</span>&gt;</span><br><span class="line">        select * from User</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line">添加数据： sqlSession.insert(<span class="string">"userMapper.add"</span>, user);</span><br><span class="line">    &lt;insert id=<span class="string">"add"</span> parameterType=<span class="string">"com.itheima.domain.User"</span>&gt;</span><br><span class="line">        <span class="function">insert into user <span class="title">values</span><span class="params">(#&#123;id&#125;,#&#123;username&#125;,#&#123;password&#125;)</span></span></span><br><span class="line"><span class="function">    &lt;/insert&gt;</span></span><br><span class="line"><span class="function">修改数据： sqlSession.<span class="title">update</span><span class="params">(<span class="string">"userMapper.update"</span>, user)</span></span>;</span><br><span class="line">    &lt;update id=<span class="string">"update"</span> parameterType=<span class="string">"com.itheima.domain.User"</span>&gt;</span><br><span class="line">        update user set username=#&#123;username&#125;,password=#&#123;password&#125; where id=#&#123;id&#125;</span><br><span class="line">    &lt;/update&gt;</span><br><span class="line">删除数据：sqlSession.delete(<span class="string">"userMapper.delete"</span>,<span class="number">3</span>);</span><br><span class="line">    &lt;delete id=<span class="string">"delete"</span> parameterType=<span class="string">"java.lang.Integer"</span>&gt;</span><br><span class="line">        delete from user where id=#&#123;id&#125;</span><br><span class="line">    &lt;/delete&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-MyBatis核心配置文件概述"><a href="#4-MyBatis核心配置文件概述" class="headerlink" title="4. MyBatis核心配置文件概述"></a>4. MyBatis核心配置文件概述</h3><h4 id="4-1-MyBatis常用配置解析"><a href="#4-1-MyBatis常用配置解析" class="headerlink" title="4.1 MyBatis常用配置解析"></a>4.1 MyBatis常用配置解析</h4><p><strong>1)environments标签</strong></p>
+<p>数据库环境的配置，支持多环境配置</p>
+<p><img src="img%5C%E5%9B%BE%E7%89%878.png" alt=""></p>
+<p>其中，事务管理器（transactionManager）类型有两种：</p>
+<p>•JDBC：这个配置就是直接使用了JDBC 的提交和回滚设置，它依赖于从数据源得到的连接来管理事务作用域。</p>
+<p>•MANAGED：这个配置几乎没做什么。它从来不提交或回滚一个连接，而是让容器来管理事务的整个生命周期（比如 JEE 应用服务器的上下文）。 默认情况下它会关闭连接，然而一些容器并不希望这样，因此需要将 closeConnection 属性设置为 false 来阻止它默认的关闭行为。</p>
+<p>其中，数据源（dataSource）类型有三种：</p>
+<p>•UNPOOLED：这个数据源的实现只是每次被请求时打开和关闭连接。</p>
+<p>•POOLED：这种数据源的实现利用“池”的概念将 JDBC 连接对象组织起来。</p>
+<p>•JNDI：这个数据源的实现是为了能在如 EJB 或应用服务器这类容器中使用，容器可以集中或在外部配置数据源，然后放置一个 JNDI 上下文的引用。</p>
+<p><strong>2)mapper标签</strong></p>
+<p>该标签的作用是加载映射的，加载方式有如下几种：</p>
+<p>•使用相对于类路径的资源引用，例如：</p>
+<mapper resource="org/mybatis/builder/AuthorMapper.xml"/>
+
+<p>•使用完全限定资源定位符（URL），例如：</p>
+<mapper url="file:///var/mappers/AuthorMapper.xml"/>
+
+<p>•使用映射器接口实现类的完全限定类名，例如：</p>
+<mapper class="org.mybatis.builder.AuthorMapper"/>
+
+<p>•将包内的映射器接口实现全部注册为映射器，例如：</p>
+<package name="org.mybatis.builder"/>
+
+<p><strong>3)Properties标签</strong></p>
+<p>实际开发中，习惯将数据源的配置信息单独抽取成一个properties文件，该标签可以加载额外配置的properties文件</p>
+<h4 id="4-3-知识小结"><a href="#4-3-知识小结" class="headerlink" title="4.3 知识小结"></a>4.3 知识小结</h4><p><strong>核心配置文件常用配置：</strong></p>
+<p>properties标签：该标签可以加载外部的properties文件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span> <span class="attr">resource</span>=<span class="string">"jdbc.properties"</span>&gt;</span><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>typeAliases标签：设置类型别名</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">typeAlias</span> <span class="attr">type</span>=<span class="string">"com.itheima.domain.User"</span> <span class="attr">alias</span>=<span class="string">"user"</span>&gt;</span><span class="tag">&lt;/<span class="name">typeAlias</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>mappers标签：加载映射配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">"com/itheima/mapper/UserMapping.xml"</span>&gt;</span><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h3 id="5-MyBatis相应API"><a href="#5-MyBatis相应API" class="headerlink" title="5.MyBatis相应API"></a>5.MyBatis相应API</h3><h4 id="5-1-SqlSession工厂构建器SqlSessionFactoryBuilder"><a href="#5-1-SqlSession工厂构建器SqlSessionFactoryBuilder" class="headerlink" title="5.1 SqlSession工厂构建器SqlSessionFactoryBuilder"></a>5.1 SqlSession工厂构建器SqlSessionFactoryBuilder</h4><p>常用API：SqlSessionFactory  build(InputStream inputStream)</p>
+<p>通过加载mybatis的核心文件的输入流的形式构建一个SqlSessionFactory对象</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String resource = <span class="string">"org/mybatis/builder/mybatis-config.xml"</span>; </span><br><span class="line">InputStream inputStream = Resources.getResourceAsStream(resource); </span><br><span class="line">SqlSessionFactoryBuilder builder = <span class="keyword">new</span> SqlSessionFactoryBuilder(); </span><br><span class="line">SqlSessionFactory factory = builder.build(inputStream);</span><br></pre></td></tr></table></figure>
+
+<p>其中， Resources 工具类，这个类在 org.apache.ibatis.io 包中。Resources 类帮助你从类路径下、文件系统或一个 web URL 中加载资源文件。</p>
+<h4 id="5-2-SqlSession工厂对象SqlSessionFactory"><a href="#5-2-SqlSession工厂对象SqlSessionFactory" class="headerlink" title="5.2 SqlSession工厂对象SqlSessionFactory"></a>5.2 SqlSession工厂对象SqlSessionFactory</h4><p>SqlSessionFactory 有多个个方法创建SqlSession 实例。</p>
+<h4 id="5-3-SqlSession会话对象"><a href="#5-3-SqlSession会话对象" class="headerlink" title="5.3 SqlSession会话对象"></a>5.3 SqlSession会话对象</h4><p>SqlSession 实例在 MyBatis 中是非常强大的一个类。在这里你会看到所有执行语句、提交或回滚事务和获取映射器实例的方法。</p>
+<p>执行语句的方法主要有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;T&gt; <span class="function">T <span class="title">selectOne</span><span class="params">(String statement, Object parameter)</span> </span></span><br><span class="line"><span class="function">&lt;E&gt; List&lt;E&gt; <span class="title">selectList</span><span class="params">(String statement, Object parameter)</span> </span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">insert</span><span class="params">(String statement, Object parameter)</span> </span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">update</span><span class="params">(String statement, Object parameter)</span> </span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">delete</span><span class="params">(String statement, Object parameter)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>操作事务的方法主要有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">commit</span><span class="params">()</span>  </span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rollback</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/10/27/mybatis01%E7%AC%94%E8%AE%B0/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/10/27/redis%E7%AC%94%E8%AE%B0/" class="archive-article-date">
-  	<time datetime="2019-10-27T06:07:53.599Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-27</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/10/27/redis%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">redis笔记</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/10/27/redis%E7%AC%94%E8%AE%B0/">redis笔记</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/10/27/RabbitMQ%20%E6%B6%88%E6%81%AF%E7%A1%AE%E8%AE%A4/" class="archive-article-date">
-  	<time datetime="2019-10-27T02:52:17.800Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/10/27/RabbitMQ%20%E6%B6%88%E6%81%AF%E7%A1%AE%E8%AE%A4/">RabbitMQ 消息确认</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
 
 
           </div>
@@ -268,8 +473,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
