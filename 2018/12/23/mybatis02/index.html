@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Auy16800&#39;s Blog">
 <meta property="og:description" content="1.Mybatis的Dao层实现1.1 传统开发方式1.1.1编写UserDao接口123public interface UserDao &amp;#123;    List&amp;lt;User&amp;gt; findAll() throws IOException;&amp;#125;  1.1.2.编写UserDaoImpl实现123456789101112public class UserDaoImpl imple">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-28T06:40:42.502Z">
+<meta property="og:updated_time" content="2019-10-27T06:43:42.902Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Auy16800&#39;s Blog" type="application/atom+xml">
@@ -229,15 +229,8 @@
 <h4 id="2-2-SQL片段抽取"><a href="#2-2-SQL片段抽取" class="headerlink" title="2.2 SQL片段抽取"></a>2.2 SQL片段抽取</h4><p>Sql 中可将重复的 sql 提取出来，使用时用 include 引用即可，最终达到 sql 重用的目的</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--抽取sql片段简化编写--&gt;</span></span><br><span class="line">&lt;sql id="selectUser" select * from User&lt;/sql&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"findById"</span> <span class="attr">parameterType</span>=<span class="string">"int"</span> <span class="attr">resultType</span>=<span class="string">"user"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">refid</span>=<span class="string">"selectUser"</span>&gt;</span><span class="tag">&lt;/<span class="name">include</span>&gt;</span> where id=#&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"findByIds"</span> <span class="attr">parameterType</span>=<span class="string">"list"</span> <span class="attr">resultType</span>=<span class="string">"user"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">refid</span>=<span class="string">"selectUser"</span>&gt;</span><span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">where</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">foreach</span> <span class="attr">collection</span>=<span class="string">"array"</span> <span class="attr">open</span>=<span class="string">"id in("</span> <span class="attr">close</span>=<span class="string">")"</span> <span class="attr">item</span>=<span class="string">"id"</span> <span class="attr">separator</span>=<span class="string">","</span>&gt;</span></span><br><span class="line">            #&#123;id&#125;</span><br><span class="line">        <span class="tag">&lt;/<span class="name">foreach</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">where</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<h4 id="2-3-知识小结"><a href="#2-3-知识小结" class="headerlink" title="2.3 知识小结"></a>2.3 知识小结</h4><p>MyBatis映射文件配置：</p>
-<p><select> :  查询</p>
-<p><insert>：插入</p>
-<p><update>：修改</p>
-<p><delete>：删除</p>
-<p><where>：where条件</p>
-<p><if>：if判断</p>
-<p><foreach>：循环</p>
-<p><sql>：sql片段抽取</p>
+
+
 <h3 id="3-MyBatis核心配置文件深入"><a href="#3-MyBatis核心配置文件深入" class="headerlink" title="3. MyBatis核心配置文件深入"></a>3. MyBatis核心配置文件深入</h3><h4 id="3-1typeHandlers标签"><a href="#3-1typeHandlers标签" class="headerlink" title="3.1typeHandlers标签"></a>3.1typeHandlers标签</h4><p>无论是 MyBatis 在预处理语句（PreparedStatement）中设置一个参数时，还是从结果集中取出一个值时， 都会用类型处理器将获取的值以合适的方式转换成 Java 类型。下表描述了一些默认的类型处理器（截取部分）。</p>
 <p>你可以重写类型处理器或创建你自己的类型处理器来处理不支持的或非标准的类型。具体做法为：实现 org.apache.ibatis.type.TypeHandler 接口， 或继承一个很便利的类 org.apache.ibatis.type.BaseTypeHandler， 然后可以选择性地将它映射到一个JDBC类型。例如需求：一个Java中的Date数据类型，我想将之存到数据库的时候存成一个1970年至今的毫秒数，取出来时转换成java的Date，即java的Date与数据库的varchar毫秒值之间转换。</p>
 <p>开发步骤：</p>
